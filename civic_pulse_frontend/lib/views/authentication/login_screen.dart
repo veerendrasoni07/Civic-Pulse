@@ -3,7 +3,6 @@ import 'package:civic_pulse_frontend/views/authentication/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 
 class LoginScreen extends ConsumerStatefulWidget {

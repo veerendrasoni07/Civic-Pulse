@@ -113,14 +113,12 @@ class AuthController{
   Future<void> googleLogin({required BuildContext context})async{
     try{
       final user = await GoogleSignIn.instance.authenticate();
-      if(user!=null){
-        final auth = await user.authentication;
-        final idToken = auth.idToken;
-        print("Google ID Token: $idToken");
-        print("User email: ${user.email}");
-        print("User name: ${user.displayName}");
-      }
-    }catch(e){
+      final auth = await user.authentication;
+      final idToken = auth.idToken;
+      print("Google ID Token: $idToken");
+      print("User email: ${user.email}");
+      print("User name: ${user.displayName}");
+        }catch(e){
       print("Google Login Error: $e");
       showSnackBar(context, "Google Login Failed", e.toString(), ContentType.failure);
     }
