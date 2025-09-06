@@ -190,7 +190,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     child: TextField(
                       controller: phoneController,
                       keyboardType: TextInputType.number,
-                      obscureText: isPasswordVisible ? false : true,
                       style: GoogleFonts.lato(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -198,13 +197,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Password",
+                        hintText: "Phone Number",
                         hintStyle: GoogleFonts.lato(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
                             fontSize: 20
                         ),
-                        prefixIcon: Icon(Icons.lock_outline,color: Colors.black,),
+                        prefixIcon: Icon(Icons.phone,color: Colors.black,),
                         contentPadding: EdgeInsets.all(18),
                       ),
                     ),

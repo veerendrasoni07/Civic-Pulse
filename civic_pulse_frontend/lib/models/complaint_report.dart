@@ -4,13 +4,18 @@ import 'dart:convert';
 class ComplaintReport {
   final String id;
   final String image;
+  final String userId;
   final String location;
   final String desc;
+  final DateTime createdAt;
+  final String profilePic;
+  final String status;
+  final int upvote;
   final String phone;
   final String department;
   final String fullname;
 
-  ComplaintReport({required this.id, required this.image, required this.location, required this.desc, required this.phone, required this.department, required this.fullname});
+  ComplaintReport({required this.id, required this.image, required this.location, required this.desc, required this.phone, required this.department, required this.fullname, required this.userId,required this.status ,required this.profilePic, required this.upvote, required this.createdAt});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -19,6 +24,11 @@ class ComplaintReport {
       'location': location,
       'desc': desc,
       'phone': phone,
+      'profilePic': profilePic,
+      'status': status,
+      'upvote': upvote,
+      'createdAt': createdAt.toIso8601String(),
+      'userId': userId,
       'department': department,
       'fullname': fullname,
     };
@@ -30,6 +40,11 @@ class ComplaintReport {
       image: map['image'] ?? '',
       location: map['location'] ?? '',
       desc: map['desc'] ?? '',
+      userId: map['userId'] ?? '',
+      profilePic: map['profilePic'] ?? '',
+      status: map['status'] ?? '',
+      upvote: map['upvote'] ?? '',
+      createdAt: DateTime.parse(map['createdAt'] ?? ''),
       phone: map['phone'] ?? '',
       department: map['department'] ?? '',
       fullname: map['fullname'] ?? '',

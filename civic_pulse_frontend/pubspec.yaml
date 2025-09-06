@@ -43,6 +43,8 @@ dependencies:
   image_picker: ^1.2.0
   lottie: ^3.3.1
   cloudinary_public: ^0.23.1
+  geolocator: ^14.0.2
+  geocoding: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +71,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - Assets/animations/camera_shutter.json
+    - Assets/images/user_image.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

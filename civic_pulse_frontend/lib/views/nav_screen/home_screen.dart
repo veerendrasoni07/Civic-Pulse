@@ -1,10 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:civic_pulse_frontend/controllers/complaint_controller.dart';
+import 'package:civic_pulse_frontend/models/complaint_report.dart';
 import 'package:civic_pulse_frontend/provider/userprovider.dart';
+import 'package:civic_pulse_frontend/views/nav_screen/reports_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 
@@ -17,6 +23,15 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   File? clickedImage;
+  bool isExpand =false ;
+
+  late Future<List<ComplaintReport>> futureMyReports;
+  @override
+  void initState() {
+    super.initState();
+    final user = ref.read(userProvider);
+    futureMyReports = ComplaintController().myReports(userId: user!.id);
+  }
 
   Future<void> pickImageFromCamera() async {
     final user = ref.read(userProvider);
@@ -33,65 +48,119 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Civic Pulse",
-          style: GoogleFonts.marcellus(
-              fontWeight: FontWeight.bold,
-              fontSize: 30
-          ),
-        ),
-        centerTitle: true,
-      ),
-      drawer: Drawer(),
-      body: SingleChildScrollView(
-        child: Column(
+    final user = ref.watch(userProvider);
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text("Click The Picture Of Issue That You Want To Report!",
-                style: GoogleFonts.montserrat(
-                    fontSize: 20, fontWeight: FontWeight.bold),),
-            ),
-            Center(
-              child: Container(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * .95,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.5,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: LinearGradient(
-                        colors: [
-                          Colors.cyan.shade300,
-                          Colors.cyan.shade700
-                        ]
+            Stack(
+              children: [
+                Container(
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(25),
+                      bottomRight: Radius.circular(25),
                     )
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 20,),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Welcome! ${user!.fullname.split(' ')[0]}",style: GoogleFonts.openSans(fontSize: 30,fontWeight: FontWeight.bold,),overflow: TextOverflow.ellipsis,),
+                            IconButton(onPressed: (){}, icon: Icon(Icons.circle_notifications,color: Colors.black,size: 35,))
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              child: Text(
+                                "user.address is the best counrty in the world i lovw this very much andheri gali narmada mandir jai shree ram",
+                                style: GoogleFonts.openSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: isExpand ? TextOverflow.visible : TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: (){
+                                setState(() {
+                                  isExpand = !isExpand;
+                                });
+                              },
+                              icon: Icon(Icons.keyboard_arrow_down_sharp,color: Colors.black,))
+                        ],
+                      ),
+                      if (isExpand) const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Lottie.asset("Assets/animations/camera_shutter.json",height: MediaQuery.of(context).size.height*0.4),
-                    Expanded(child: SizedBox()),
-                    ElevatedButton(
-                        onPressed: () async {
-                          await pickImageFromCamera();
-                        },
-                        child: Text("Click Photo",
-                          style: GoogleFonts.montserrat(
-                              fontSize: 20, fontWeight: FontWeight.bold),)),
-                    SizedBox(height: 10,)
-                  ],
-                ),
+
+              ],
+            ),
+            TabBar(
+                tabs: [
+                  Tab(text: "Issues In My Area",),
+                  Tab(text: 'My Reports',)
+                ]
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  FutureBuilder<List<ComplaintReport>>(
+                    future: futureMyReports,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text(snapshot.error.toString()));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No Data'));
+                      } else {
+                        final reports = snapshot.data!;
+                        return ListView.builder(
+                          itemCount: reports.length,
+                          itemBuilder: (context, index) {
+                            final report = reports[index];
+                            return MyReport(report: report,);
+                          },
+                        );
+                      }
+                    },
+                  ),
+                  const Center(child: Text("Nearby Reports")),
+                ],
               ),
-            )
+            ),
+
           ],
         ),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: Colors.teal,
+          icon: Icon(Icons.camera_alt_outlined,color: Colors.black,),
+          label: Text("Post An Issue",style: GoogleFonts.montserrat(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.black),),
+          onPressed: () async {
+            await pickImageFromCamera();
+          },
+
+        )
       ),
     );
   }
@@ -127,6 +196,55 @@ class _ComplaintFormState extends State<ComplaintForm> {
     "Water Supply",
     "Other"
   ];
+
+  Future<Position> getCurrentPosition()async{
+    bool isServiceEnabled;
+    LocationPermission permission;
+    // checking if location services are enabled or not
+    isServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if(!isServiceEnabled){
+      throw Exception('Location services are disabled');
+    }
+
+    // check for permissions
+    permission = await Geolocator.checkPermission();
+    if(permission == LocationPermission.denied){
+      permission = await Geolocator.requestPermission();
+      if(permission == LocationPermission.denied){
+        throw Exception('Location permissions are denied');
+      }
+    }
+    if(permission == LocationPermission.deniedForever){
+      throw Exception('Location permissions are permanently denied');
+    }
+
+    // get current position
+    return await Geolocator.getCurrentPosition(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.best
+      )
+    );
+
+  }
+
+  Future<String> getAddressFromLatLng(double lat,double lng)async{
+    try{
+      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+      print(placemarks);
+      if(placemarks.isNotEmpty){
+        Placemark place = placemarks[0];
+        String address = '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+        return address;
+      }
+      else{
+        throw Exception('No address found');
+      }
+    }catch(e){
+      throw Exception(e.toString());
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -192,6 +310,19 @@ class _ComplaintFormState extends State<ComplaintForm> {
                   ),
                   validator: (value) =>
                   value == null || value.isEmpty ? "Enter location" : null,
+                ),
+                TextButton(
+                    onPressed: ()async{
+                      Position pos = await getCurrentPosition();
+                      String address = await getAddressFromLatLng(pos.latitude, pos.longitude);
+                      _locationController.text = address;
+                    },
+                    child: Row(
+                      children: [
+                        Icon(Icons.location_on_rounded,color: Colors.blueAccent,),
+                        Text("Use Your Current Location",style: GoogleFonts.montserrat(fontSize: 16,fontWeight: FontWeight.bold,color: Colors.blueAccent),)
+                      ],
+                    )
                 ),
                 const SizedBox(height: 16),
 

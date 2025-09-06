@@ -22,7 +22,7 @@ class ComplaintController {
     try {
       final CloudinaryPublic cloudinaryPublic = CloudinaryPublic(
         "dktwuay7l",
-        "civic_pulse_preset",
+        "Civic Pulse",
       );
       final imageByte = await image.readAsBytes();
 
@@ -43,7 +43,7 @@ class ComplaintController {
           'image': imageUrl,
           'userId': userId,
           'desc': desc,
-          'phone': phone,
+          'phone': '7489339369',
           'location': location,
           'department': department,
         }),
@@ -76,7 +76,7 @@ class ComplaintController {
   Future<List<ComplaintReport>> myReports({required String userId}) async {
     try {
       http.Response response = await http.get(
-        Uri.parse('$uri/api/my-reports'),
+        Uri.parse('$uri/api/my-reports/$userId'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -87,7 +87,7 @@ class ComplaintController {
             data.map((report) => ComplaintReport.fromMap(report)).toList();
         return reports;
       } else {
-        throw Exception('Something went wrong');
+        throw Exception('Something went wrong ${response.statusCode}');
       }
     } catch (e) {
       print(e.toString());

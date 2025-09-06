@@ -1,5 +1,6 @@
 import 'package:civic_pulse_frontend/views/nav_screen/home_screen.dart';
 import 'package:civic_pulse_frontend/views/nav_screen/profile_screen.dart';
+import 'package:civic_pulse_frontend/views/nav_screen/reports_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -12,7 +13,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   List<Widget> pages = [
     HomeScreen(),
-    ProfileScreen()
+    ProfileScreen(),
   ];
 
   int selectedIndex = 0;

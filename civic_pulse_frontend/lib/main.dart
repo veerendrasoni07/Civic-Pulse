@@ -23,11 +23,12 @@ class MyApp extends ConsumerWidget {
         ref.read(userProvider.notifier).setUser(user);
       }
       else{
-        ref.read(userProvider.notifier).signOut( );
+        ref.read(userProvider.notifier).signOut();
       }
     }
 
     return  MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: FutureBuilder(
           future: checkTokenAndUser(),
           builder: (context,snapshot){
