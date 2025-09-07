@@ -6,10 +6,11 @@ const reportRouter = express.Router();
 // complaint report
 reportRouter.post('/api/complaint-report',async(req,res)=>{
     try {
-        const {image,location,department,desc,phone,fullname} = req.body;
+        const {image,location,department,desc,phone,fullname,userId} = req.body;
         const report = new ComplainReport(
             {
                 image,
+                userId,
                 location,
                 desc,
                 department,
@@ -23,7 +24,7 @@ reportRouter.post('/api/complaint-report',async(req,res)=>{
 
     } catch (error) {
         console.log(error);
-        res.status(200).json({error:"Internal Server Error"});
+        res.status(500).json({error:"Internal Server Error"});
     }
 });
 
@@ -49,27 +50,28 @@ reportRouter.put('/api/update-location',async(req,res)=>{
 });
 
 // my reports
-reportRouter.get('/api/my-reports',async(req,res)=>{
+reportRouter.get('/api/my-reports/:userId',async(req,res)=>{
     try {
-        const {userId} = req.body;
-        const reports = await ComplainReport.find({userId}).sort(-1);
+        const {userId} = req.params;
+        const reports = await ComplainReport.find({userId});
         res.status(200).json(reports);
     } catch (error) {
         console.log(error);
         res.status(500).json({error:"Internal Server Error"});
     }
-})
+});
 
 // nearby reports
-reportRouter.get('/api/nearby-report',async(req,res)=>{
+reportRouter.get('/api/nearby-report/:address/:userId',async(req,res)=>{
     try{
-        const {address} = req.body;
+        const {address,userId} = req.params;
         const nearbyReports = await ComplainReport.find(
             {
                 $or:[
                     {location:{$regex:address,$options:'i'}},
                     {desc:{$regex:address,$options:'i'}}
-                ]
+                ],
+                userId:{$ne:userId}
             }
         );
 
@@ -79,6 +81,10 @@ reportRouter.get('/api/nearby-report',async(req,res)=>{
         console.log(error);
         res.status(500).json({error:"Internal Server Error"});
     }
-})
+});
+
+
+
+
 
 module.exports = reportRouter;
