@@ -1,5 +1,6 @@
 import 'package:civic_pulse_frontend/provider/userprovider.dart';
 import 'package:civic_pulse_frontend/views/authentication/login_screen.dart';
+import 'package:civic_pulse_frontend/views/authentication/sign_up_screen.dart';
 import 'package:civic_pulse_frontend/views/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,16 +30,17 @@ class MyApp extends ConsumerWidget {
 
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FutureBuilder(
-          future: checkTokenAndUser(),
-          builder: (context,snapshot){
-            if(snapshot.connectionState == ConnectionState.waiting){
-              return Center(child: CircularProgressIndicator(),);
-            }
-            final user = ref.watch(userProvider);
-            return user != null ? MainScreen() : LoginScreen();
-          }
-      ),
+        home: SignupScreen()
+      //FutureBuilder(
+      //     future: checkTokenAndUser(),
+      //     builder: (context,snapshot){
+      //       if(snapshot.connectionState == ConnectionState.waiting){
+      //         return Center(child: CircularProgressIndicator(),);
+      //       }
+      //       final user = ref.watch(userProvider);
+      //       return user != null ? MainScreen() : LoginScreen();
+      //     }
+      // ),
     );
   }
 }

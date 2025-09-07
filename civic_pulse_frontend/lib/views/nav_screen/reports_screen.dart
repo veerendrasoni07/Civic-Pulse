@@ -1,16 +1,21 @@
 import 'package:civic_pulse_frontend/controllers/complaint_controller.dart';
 import 'package:civic_pulse_frontend/models/complaint_report.dart';
+import 'package:civic_pulse_frontend/models/user.dart';
+import 'package:civic_pulse_frontend/provider/commentProvider.dart';
 import 'package:civic_pulse_frontend/provider/userprovider.dart';
+import 'package:civic_pulse_frontend/views/Widgets/comment_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MyReport extends StatelessWidget {
+class MyReport extends ConsumerWidget {
   final ComplaintReport report;
-  const MyReport({super.key,required this.report});
+  final User user;
+  const MyReport({super.key,required this.report,required this.user});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final comments = ref.watch(commentProvider);
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,14 +129,23 @@ class MyReport extends StatelessWidget {
               Row(
                 children: [
                   TextButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          showDragHandle: true,
+                          builder: (context) {
+                            return CommentSection(reportId: report.id,fullname: user.fullname,profilePic: user.picture,userId: user.id,);
+                          },
+                        );
+                      },
                       child: Row(
                         children: [
                           Icon(Icons.mode_comment_rounded),
                           SizedBox(width: 5,),
                           Text("Comment"),
                           SizedBox(width: 5,),
-                          Text("1")
+                          Text(comments.length.toString())
                         ],
                       )
                   ),

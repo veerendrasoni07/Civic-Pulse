@@ -1,14 +1,14 @@
-import 'package:civic_pulse_frontend/views/worker/views/screen/worker_home_screen.dart';
-import 'package:civic_pulse_frontend/views/worker/views/screen/worker_profile_screen.dart';
+import 'package:civic_pulse_frontend/views/depthead/views/screen/dept_head_home_screen.dart';
+import 'package:civic_pulse_frontend/views/depthead/views/screen/dept_head_profile_screen.dart';
 import 'package:flutter/material.dart';
 
-class WorkerMainScreen extends StatelessWidget {
-  WorkerMainScreen({super.key});
+class DeptHeadMainScreen extends StatelessWidget {
+  DeptHeadMainScreen({super.key});
 
   int selectedPage = 0;
   final List<Widget> pages = [
-    WorkerHomeScreen(),
-    WorkerProfileScreen(),
+    DeptHeadHomeScreen(),
+    DeptHeadProfileScreen(),
   ];
   @override
   Widget build(BuildContext context) {

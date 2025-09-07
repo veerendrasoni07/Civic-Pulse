@@ -18,6 +18,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final AuthController authController = AuthController();
 
   bool isPasswordVisible = false;
+  String? role;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +144,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
+                DropdownButtonFormField<String>(
+                  value: role,
+                  hint: const Text("Select Role"),
+                  decoration: InputDecoration(
+                    focusColor: Colors.white,
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(color: Colors.white)
+                    )
+                  ),
+                  style: const TextStyle(color: Colors.black),
+                  dropdownColor: Colors.white,
+                  items: const [
+                    DropdownMenuItem(value: "citizen", child: Text("Citizen")),
+                    DropdownMenuItem(value: "worker", child: Text("Worker")),
+                    DropdownMenuItem(value: "department head", child: Text("Department Head")),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      role = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -160,12 +189,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      authController.login(
+                      if(role == 'citizen'){
+                        authController.login(
                           email: emailController.text,
                           password: passwordController.text,
                           context: context,
-                          ref: ref
-                      );
+                          ref: ref,
+                        );
+                      }
+                      else if(role=='worker'){
+                        authController.loginWorker(
+                          email: emailController.text,
+                          password: passwordController.text,
+                          context: context,
+                          ref: ref,
+                        );
+                      }
+                      else if(role=='department head'){
+                        authController.loginDeptHead(
+                          email: emailController.text,
+                          password: passwordController.text,
+                          context: context,
+                          ref: ref,
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,

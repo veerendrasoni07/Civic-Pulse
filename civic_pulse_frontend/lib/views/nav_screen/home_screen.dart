@@ -90,7 +90,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12.0),
                               child: Text(
-                                "user.address is the best counrty in the world i lovw this very much andheri gali narmada mandir jai shree ram",
+                                "Patan Road, Karmeta, Jabalpur, 482002, India",
                                 style: GoogleFonts.openSans(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -139,7 +139,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           itemCount: reports.length,
                           itemBuilder: (context, index) {
                             final report = reports[index];
-                            return MyReport(report: report,);
+                            return MyReport(report: report,user: user,);
                           },
                         );
                       }

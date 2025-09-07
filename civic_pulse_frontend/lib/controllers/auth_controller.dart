@@ -3,10 +3,15 @@ import 'dart:convert';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:civic_pulse_frontend/global_variable..dart';
+import 'package:civic_pulse_frontend/models/dept_head.dart';
 import 'package:civic_pulse_frontend/models/user.dart';
+import 'package:civic_pulse_frontend/models/woker.dart';
 import 'package:civic_pulse_frontend/provider/userprovider.dart';
+import 'package:civic_pulse_frontend/provider/workerprovider.dart';
 import 'package:civic_pulse_frontend/service/manage_http_request.dart';
 import 'package:civic_pulse_frontend/views/authentication/login_screen.dart';
+import 'package:civic_pulse_frontend/views/depthead/views/dept_head_main_screen.dart';
+import 'package:civic_pulse_frontend/views/worker/views/worker_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -124,6 +129,57 @@ class AuthController{
     }
   }
 
+  // sign-out user
+  Future<void> signOut({
+    required BuildContext context,
+    required WidgetRef ref,
+  })async{
+
+    showDialog(
+        context: context,
+        builder: (context){
+          return AlertDialog(
+            title: Text(
+              "Are you sure you want to logout?",
+              style: GoogleFonts.lato(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                    onPressed: ()async{
+                      SharedPreferences preferences = await SharedPreferences.getInstance();
+                      await preferences.remove('auth-token');
+                      ref.read(userProvider.notifier).signOut();
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>LoginScreen()), (route)=>false);
+                      showSnackBar(context, 'Logout', 'Successfully logged out', ContentType.success);
+                    },
+                    child: Text(
+                      "Yes",
+                      style: GoogleFonts.lato(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface
+                      ),
+                    )
+                ),
+                SizedBox(width: 15,),
+                TextButton(onPressed: ()=>Navigator.pop(context), child: Text("No",style: GoogleFonts.lato(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface
+                ),))
+              ],
+            ),
+          );
+        }
+    );
+  }
+
+
 
   Future<void> sendOtp({
     required String email,
@@ -223,4 +279,188 @@ class AuthController{
       showSnackBar(context, "Login Failed", e.toString(), ContentType.failure);
     }
   }
+
+
+  Future<void> signUpWorker({
+    required String fullname,
+    required String email,
+    required String password,
+    required String phone,
+    required String department,
+    required BuildContext context,
+    required WidgetRef ref,
+  })async{
+    try {
+      Worker worker = Worker(
+          id: '',
+          fullname: fullname,
+          email: email,
+          password: password,
+          phone: phone,
+          address: '',
+          googleId: '',
+          department: department,
+          picture: '',
+          assignedReports: [],
+          authProvider: [],
+          role: ''
+      );
+      http.Response response = await http.post(
+          Uri.parse('$uri/api/worker/register'),
+          body: worker.toJson(),
+          headers: <String,String>{
+            'Content-Type':'application/json; charset=UTF-8'
+          }
+      );
+
+      manageHttpRequest(response: response, context: context, onSuccess: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+        showSnackBar(context, "SignUp Successfully", "Account is created now you can login with same credential!", ContentType.success);
+      });
+    }catch (e) {
+      showSnackBar(context, "Failed To SignUp", e.toString(), ContentType.failure);
+      print(e.toString());
+    }
+
+  }
+
+
+  Future<void> loginWorker({
+    required String email,
+    required String password,
+    required BuildContext context,
+    required WidgetRef ref
+  })async{
+    try{
+
+      http.Response response = await http.post(
+          Uri.parse('$uri/api/worker/login'),
+          body: jsonEncode({
+            'email':email,
+            'password':password,
+          }),
+          headers: <String,String>{
+            'Content-Type':'application/json; charset=UTF-8'
+          }
+      );
+
+      manageHttpRequest(
+          response: response,
+          context: context,
+          onSuccess: ()async{
+
+            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+            String token = await jsonDecode(response.body)['token'];
+
+            await sharedPreferences.setString('auth-token',token );
+
+            final workerJson = jsonEncode(jsonDecode(response.body)['worker']);
+
+            ref.read(workerProvider.notifier).setWorker(workerJson);
+
+            await sharedPreferences.setString('worker', workerJson);
+
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>WorkerMainScreen()), (route)=>false);
+
+          }
+      );
+    }catch(e){
+      showSnackBar(context, "Login Failed", e.toString(), ContentType.failure);
+    }
+  }
+Future<void> signUpDeptHead({
+    required String fullname,
+    required String email,
+    required String password,
+    required String phone,
+    required String department,
+    required String code,
+    required BuildContext context,
+    required WidgetRef ref,
+  })async{
+    try {
+      DeptHead deptHead = DeptHead(
+          id: '',
+          fullname: fullname,
+          email: email,
+          password: password,
+          phone: phone,
+          address: '',
+          googleId: '',
+          picture: '',
+          department: department,
+          assignedReports: [],
+          authProvider: [],
+          role: '',
+          codeUsed: code
+      );
+      http.Response response = await http.post(
+          Uri.parse('$uri/api/register-head'),
+          body: deptHead.toJson(),
+          headers: <String,String>{
+            'Content-Type':'application/json; charset=UTF-8'
+          }
+      );
+
+      manageHttpRequest(response: response, context: context, onSuccess: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+        showSnackBar(context, "SignUp Successfully", "Account is created now you can login with same credential!", ContentType.success);
+      });
+    }catch (e) {
+      showSnackBar(context, "Failed To SignUp", e.toString(), ContentType.failure);
+      print(e.toString());
+    }
+
+  }
+
+
+  Future<void> loginDeptHead({
+    required String email,
+    required String password,
+    required BuildContext context,
+    required WidgetRef ref
+  })async{
+    try{
+
+      http.Response response = await http.post(
+          Uri.parse('$uri/api/dept-head/login'),
+          body: jsonEncode({
+            'email':email,
+            'password':password,
+          }),
+          headers: <String,String>{
+            'Content-Type':'application/json; charset=UTF-8'
+          }
+      );
+
+      manageHttpRequest(
+          response: response,
+          context: context,
+          onSuccess: ()async{
+
+            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+            String token = await jsonDecode(response.body)['token'];
+
+            await sharedPreferences.setString('auth-token',token );
+
+            final deptHeadJson = jsonEncode(jsonDecode(response.body)['depthead']);
+
+            ref.read(workerProvider.notifier).setWorker(deptHeadJson);
+
+            await sharedPreferences.setString('dept-head', deptHeadJson);
+
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DeptHeadMainScreen()), (route)=>false);
+
+          }
+      );
+    }catch(e){
+      showSnackBar(context, "Login Failed", e.toString(), ContentType.failure);
+    }
+  }
+
+
+
+
 }

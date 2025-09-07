@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:civic_pulse_frontend/global_variable..dart';
+import 'package:civic_pulse_frontend/models/comments.dart';
 import 'package:civic_pulse_frontend/models/complaint_report.dart';
+import 'package:civic_pulse_frontend/provider/commentProvider.dart';
 import 'package:civic_pulse_frontend/service/manage_http_request.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 class ComplaintController {
@@ -94,4 +97,44 @@ class ComplaintController {
       throw Exception(e.toString());
     }
   }
+
+  Future<void> addComment({
+    required String reportId,
+    required String userId,
+    required String text,
+    required String profilePic,
+    required String fullname,
+    required WidgetRef ref,
+    required BuildContext context,
+})async{
+    try{
+      http.Response response = await http.post(
+          Uri.parse('$uri/api/comment/$reportId'),
+        body: jsonEncode({
+          'userId':userId,
+          'text':text,
+          'profilePic':profilePic,
+          'fullname':fullname
+        }),
+        headers: <String,String>{
+            'Content-Type':'application/json; charset=UTF-8'
+        },
+      );
+
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        final Comments comment = Comments.fromMap(data);
+        ref.read(commentProvider.notifier).addComment(comment);
+        showSnackBar(context, 'Comment Added', 'Successfully', ContentType.success);
+      }
+
+    }catch(e){
+      print(e.toString());
+      showSnackBar(context, 'Error Occurred', e.toString(), ContentType.failure);
+    }
+  }
+
+
+
+
 }
