@@ -314,7 +314,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     )
                   ],
                 ),
-                SizedBox(height: 100,)
+                SizedBox(height: 200,)
               ],
             ),
           ),

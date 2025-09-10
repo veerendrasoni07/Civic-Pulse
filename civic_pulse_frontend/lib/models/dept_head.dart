@@ -12,7 +12,6 @@ class DeptHead {
   final String address;
   final String picture;
   final List<String> authProvider;
-  final List<String> assignedReports ;
   final String role;
   final String codeUsed;
 
@@ -26,7 +25,6 @@ class DeptHead {
     required this.address,
     required this.department,
     required this.role,
-    required this.assignedReports,
     required this.password,
     required this.id,
     required this.codeUsed
@@ -41,7 +39,6 @@ class DeptHead {
       'googleId': googleId,
       'picture': picture,
       'department': department,
-      'assignedReports': assignedReports,
       'address':address,
       'password': password,
       'authProvider': authProvider,
@@ -62,7 +59,6 @@ class DeptHead {
       address: map['address'] ?? '',
       password: map['password'] ?? '',
       authProvider: List<String>.from((map['authProvider'] ?? [])),
-      assignedReports: List<String>.from((map['assignedReports'] ?? [])),
       role: map['role'] ?? '',
       codeUsed: map['codeUsed'] ?? ''
     );

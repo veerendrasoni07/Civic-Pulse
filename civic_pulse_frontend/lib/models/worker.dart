@@ -6,22 +6,22 @@ class Worker {
   final String fullname;
   final String email;
   final String phone;
-  final String password;
-  final String address;
   final String department;
+  final String address;
   final String picture;
-  final List<String> assignedReports ;
+  final String password;
+  final List<String> assignedReports;
 
   Worker({
+    required this.id,
     required this.fullname,
     required this.email,
     required this.phone,
-    required this.picture,
     required this.department,
     required this.address,
-    required this.assignedReports,
+    required this.picture,
     required this.password,
-    required this.id,
+    required this.assignedReports,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,11 +30,11 @@ class Worker {
       'fullname': fullname,
       'email': email,
       'phone': phone,
-      'picture': picture,
-      'assignedReports': assignedReports,
       'department': department,
-      'address':address,
+      'address': address,
+      'picture': picture,
       'password': password,
+      'assignedTasks': assignedReports,
     };
   }
 
@@ -44,9 +44,9 @@ class Worker {
       fullname: map['fullname'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
-      picture: map['picture'] ?? '',
       department: map['department'] ?? '',
       address: map['address'] ?? '',
+      picture: map['picture'] ?? '',
       password: map['password'] ?? '',
       assignedReports: List<String>.from((map['assignedReports'] ?? [])),
     );
@@ -54,6 +54,5 @@ class Worker {
 
   String toJson() => json.encode(toMap());
 
-  factory Worker.fromJson(String source) =>
-      Worker.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Worker.fromJson(String source) => Worker.fromMap(json.decode(source) as Map<String, dynamic>);
 }

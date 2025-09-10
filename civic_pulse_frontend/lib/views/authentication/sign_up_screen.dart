@@ -370,7 +370,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             fullname: fullNameController.text,
                             email: emailController.text,
                             password: passwordController.text,
-                            phone: '',
+                            phone: phoneController.text,
                             context: context,
                             ref: ref,
                           ).whenComplete((){
@@ -387,7 +387,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             department: department!,
                             context: context,
                             ref: ref,
-                            phone: '',
+                            phone: phoneController.text,
                           );
                         }
                         else if(role=='department head'){
@@ -398,7 +398,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             department: department!,
                             context: context,
                             ref: ref,
-                            phone: '',
+                            phone: phoneController.text,
                             code: codeController.text,
                           );
                         }
@@ -481,7 +481,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         ),
                       )
                     ],
-                  )
+                  ),
+                  SizedBox(height: 100,)
                 ],
               ),
             ),

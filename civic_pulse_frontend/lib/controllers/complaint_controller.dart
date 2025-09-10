@@ -59,7 +59,7 @@ class ComplaintController {
         showSnackBar(
           context,
           'Successfully',
-          'report fucked',
+          'Your Report has been sent.',
           ContentType.success,
         );
       } else {
@@ -88,6 +88,30 @@ class ComplaintController {
         final List<dynamic> data = jsonDecode(response.body);
         final List<ComplaintReport> reports =
             data.map((report) => ComplaintReport.fromMap(report)).toList();
+        return reports;
+      } else {
+        throw Exception('Something went wrong ${response.statusCode}');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<List<ComplaintReport>> issuesInMyArea({required String userId,required String address}) async {
+    try {
+      http.Response response = await http.get(
+        Uri.parse('$uri/api/nearby-report/$userId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        final List<dynamic> data = jsonDecode(response.body);
+        final List<ComplaintReport> reports =
+        data.map((report) => ComplaintReport.fromMap(report)).toList();
+        print(reports);
         return reports;
       } else {
         throw Exception('Something went wrong ${response.statusCode}');

@@ -2,19 +2,20 @@
 import 'dart:convert';
 
 class Comments {
-
+  final String id;
   final String userId;
   final String fullname;
   final String profilePic;
   final String text;
   final DateTime createdAt;
 
-  Comments({required this.userId, required this.fullname, required this.profilePic, required this.text, required this.createdAt});
+  Comments({required this.id,required this.userId, required this.fullname, required this.profilePic, required this.text, required this.createdAt});
 
 
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'userId': userId,
       'fullname': fullname,
       'profilePic': profilePic,
@@ -25,6 +26,7 @@ class Comments {
 
   factory Comments.fromMap(Map<String, dynamic> map) {
     return Comments(
+      id: map['_id'] ?? '',
       userId: map['userId'] ?? '',
       fullname: map['fullname'] ?? '',
       profilePic: map['profilePic'] ?? '',

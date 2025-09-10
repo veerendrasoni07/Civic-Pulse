@@ -5,7 +5,8 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:civic_pulse_frontend/global_variable..dart';
 import 'package:civic_pulse_frontend/models/dept_head.dart';
 import 'package:civic_pulse_frontend/models/user.dart';
-import 'package:civic_pulse_frontend/models/woker.dart';
+import 'package:civic_pulse_frontend/models/worker.dart';
+import 'package:civic_pulse_frontend/provider/deptheadprovider.dart';
 import 'package:civic_pulse_frontend/provider/userprovider.dart';
 import 'package:civic_pulse_frontend/provider/workerprovider.dart';
 import 'package:civic_pulse_frontend/service/manage_http_request.dart';
@@ -281,12 +282,13 @@ class AuthController{
   }
 
 
+  // TODO:
   Future<void> signUpWorker({
     required String fullname,
     required String email,
     required String password,
-    required String phone,
     required String department,
+    required String phone,
     required BuildContext context,
     required WidgetRef ref,
   })async{
@@ -296,14 +298,11 @@ class AuthController{
           fullname: fullname,
           email: email,
           password: password,
+          department: department,
+          assignedReports: [],
           phone: phone,
           address: '',
-          googleId: '',
-          department: department,
           picture: '',
-          assignedReports: [],
-          authProvider: [],
-          role: ''
       );
       http.Response response = await http.post(
           Uri.parse('$uri/api/worker/register'),
@@ -390,7 +389,6 @@ Future<void> signUpDeptHead({
           googleId: '',
           picture: '',
           department: department,
-          assignedReports: [],
           authProvider: [],
           role: '',
           codeUsed: code
@@ -447,7 +445,7 @@ Future<void> signUpDeptHead({
 
             final deptHeadJson = jsonEncode(jsonDecode(response.body)['depthead']);
 
-            ref.read(workerProvider.notifier).setWorker(deptHeadJson);
+            ref.read(deptHeadProvider.notifier).setDeptHead(deptHeadJson);
 
             await sharedPreferences.setString('dept-head', deptHeadJson);
 

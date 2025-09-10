@@ -26,11 +26,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool isExpand =false ;
 
   late Future<List<ComplaintReport>> futureMyReports;
+  late Future<List<ComplaintReport>> futureNearByReports;
+
+  Future<void> fetchNearByReports() async {
+    final user = ref.read(userProvider);
+    futureNearByReports = ComplaintController().issuesInMyArea(userId: user!.id,address: 'Patan Road, Karmeta, Jabalpur, 482002, India');
+  }
+
   @override
   void initState() {
     super.initState();
     final user = ref.read(userProvider);
     futureMyReports = ComplaintController().myReports(userId: user!.id);
+    fetchNearByReports();
   }
 
   Future<void> pickImageFromCamera() async {
@@ -49,6 +57,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
+    print(user!.address);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -125,6 +134,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: TabBarView(
                 children: [
                   FutureBuilder<List<ComplaintReport>>(
+                    future: futureNearByReports,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text(snapshot.error.toString()));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No Data'));
+                      } else {
+                        final nearByReports = snapshot.data!;
+                        return ListView.builder(
+                          itemCount: nearByReports.length,
+                          itemBuilder: (context, index) {
+                            final nearByReport = nearByReports[index];
+                            return MyReport(report: nearByReport,user: user,);
+                          },
+                        );
+                      }
+                    },
+                  ),
+                  FutureBuilder<List<ComplaintReport>>(
                     future: futureMyReports,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -145,7 +175,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       }
                     },
                   ),
-                  const Center(child: Text("Nearby Reports")),
                 ],
               ),
             ),

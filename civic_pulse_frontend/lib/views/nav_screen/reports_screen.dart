@@ -1,8 +1,6 @@
-import 'package:civic_pulse_frontend/controllers/complaint_controller.dart';
 import 'package:civic_pulse_frontend/models/complaint_report.dart';
 import 'package:civic_pulse_frontend/models/user.dart';
 import 'package:civic_pulse_frontend/provider/commentProvider.dart';
-import 'package:civic_pulse_frontend/provider/userprovider.dart';
 import 'package:civic_pulse_frontend/views/Widgets/comment_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

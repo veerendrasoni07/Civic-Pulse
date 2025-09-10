@@ -2,14 +2,21 @@ import 'package:civic_pulse_frontend/views/depthead/views/screen/dept_head_home_
 import 'package:civic_pulse_frontend/views/depthead/views/screen/dept_head_profile_screen.dart';
 import 'package:flutter/material.dart';
 
-class DeptHeadMainScreen extends StatelessWidget {
-  DeptHeadMainScreen({super.key});
+class DeptHeadMainScreen extends StatefulWidget {
+  const DeptHeadMainScreen({super.key});
 
+  @override
+  State<DeptHeadMainScreen> createState() => _DeptHeadMainScreenState();
+}
+
+class _DeptHeadMainScreenState extends State<DeptHeadMainScreen> {
   int selectedPage = 0;
+
   final List<Widget> pages = [
     DeptHeadHomeScreen(),
     DeptHeadProfileScreen(),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +24,9 @@ class DeptHeadMainScreen extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: selectedPage,
           onTap: (value){
-            selectedPage = value;
+            setState(() {
+              selectedPage = value;
+            });
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),

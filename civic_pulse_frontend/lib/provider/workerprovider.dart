@@ -1,10 +1,10 @@
 import 'package:civic_pulse_frontend/models/user.dart';
-import 'package:civic_pulse_frontend/models/woker.dart';
+import 'package:civic_pulse_frontend/models/worker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class WorkerProvider extends StateNotifier<Worker?>{
   WorkerProvider():super(
-      Worker(id: '',fullname: '', email: '', phone: '', googleId: '', picture: '',address:'',password: '', authProvider: [],assignedReports: [],department: '', role: '')
+      Worker(id: '',fullname: '', email: '', phone: '', picture: '',address:'',password: '',assignedReports: [],department: '')
   );
 
 
