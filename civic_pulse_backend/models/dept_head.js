@@ -13,7 +13,6 @@ const deptHeadSchema = new mongoose.Schema({
   phone: String,
   address: String,
   picture: String,
-  assignedReports: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ComplainReport' }],
   codeUsed: String, // Department code they registered with
   createdAt: { type: Date, default: Date.now }
 });

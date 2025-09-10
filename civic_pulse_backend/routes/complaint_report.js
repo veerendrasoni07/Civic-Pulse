@@ -62,15 +62,18 @@ reportRouter.get('/api/my-reports/:userId',async(req,res)=>{
 });
 
 // nearby reports
-reportRouter.get('/api/nearby-report/:address/:userId',async(req,res)=>{
+reportRouter.get('/api/nearby-report/:userId',async(req,res)=>{
     try{
-        const {address,userId} = req.params;
+        //const {address,userId} = req.params;
+        const {userId} = req.params;
+
+
         const nearbyReports = await ComplainReport.find(
             {
-                $or:[
-                    {location:{$regex:address,$options:'i'}},
-                    {desc:{$regex:address,$options:'i'}}
-                ],
+                /*$or:[
+                    {location:{$regex:query,$options:'i'}},
+                    {desc:{$regex:query,$options:'i'}}
+                ],*/
                 userId:{$ne:userId}
             }
         );
