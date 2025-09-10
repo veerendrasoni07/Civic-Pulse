@@ -7,24 +7,18 @@ class Worker {
   final String email;
   final String phone;
   final String password;
-  final String googleId;
   final String address;
   final String department;
   final String picture;
-  final List<String> authProvider;
   final List<String> assignedReports ;
-  final String role;
 
   Worker({
     required this.fullname,
     required this.email,
     required this.phone,
-    required this.googleId,
     required this.picture,
     required this.department,
-    required this.authProvider,
     required this.address,
-    required this.role,
     required this.assignedReports,
     required this.password,
     required this.id,
@@ -36,14 +30,11 @@ class Worker {
       'fullname': fullname,
       'email': email,
       'phone': phone,
-      'googleId': googleId,
       'picture': picture,
       'assignedReports': assignedReports,
       'department': department,
       'address':address,
       'password': password,
-      'authProvider': authProvider,
-      'role': role,
     };
   }
 
@@ -53,14 +44,11 @@ class Worker {
       fullname: map['fullname'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
-      googleId: map['googleId'] ?? '',
       picture: map['picture'] ?? '',
       department: map['department'] ?? '',
       address: map['address'] ?? '',
       password: map['password'] ?? '',
-      authProvider: List<String>.from((map['authProvider'] ?? [])),
       assignedReports: List<String>.from((map['assignedReports'] ?? [])),
-      role: map['role'] ?? '',
     );
   }
 
