@@ -49,6 +49,18 @@ adminRouter.post("/api/assign-reports/dept-head", async (req, res) => {
     console.error("Error assigning reports:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+});
+
+
+adminRouter.get('/api/get-depthead/:department',async(req,res)=>{
+  try {
+    const {department} = req.params;
+    const deptHead = await DeptHead.find({department:department});
+    res.status(200).json(deptHead);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({error:"Internal Server Error"})
+  }
 })
 
 
