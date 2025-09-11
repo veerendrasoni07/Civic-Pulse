@@ -22,7 +22,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final AuthController authController = AuthController();
 
   bool isPasswordVisible = false;
-  String? role;
   String? department;
 
   List<String> departmentList = [
@@ -33,84 +32,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   ];
 
 
-  void chooseRole() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        String? tempRole = role; // temporary selection before confirm
 
-        return AlertDialog(
-          title: Text("Select your role"),
-          content: StatefulBuilder(
-            builder: (context, setStateDialog) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  RadioListTile(
-                    value: "citizen",
-                    title: Text("Citizen"),
-                    groupValue: tempRole,
-                    onChanged: (value) {
-                      setStateDialog(() {
-                        tempRole = value.toString();
-                      });
-                    },
-                  ),
-                  RadioListTile(
-                    value: "worker",
-                    title: Text("Worker"),
-                    groupValue: tempRole,
-                    onChanged: (value) {
-                      setStateDialog(() {
-                        tempRole = value.toString();
-                      });
-                    },
-                  ),
-                  RadioListTile(
-                    value: "department head",
-                    title: Text("Department Head"),
-                    groupValue: tempRole,
-                    onChanged: (value) {
-                      setStateDialog(() {
-                        tempRole = value.toString();
-                      });
-                    },
-                  ),
-                ],
-              );
-            },
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                if (tempRole != null) {
-                  setState(() {
-                    role = tempRole; // ✅ Confirm selection
-                  });
-                  Navigator.pop(context);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Please select a role first")),
-                  );
-                }
-              },
-              child: const Text("Submit"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Schedule the dialog after build completes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      chooseRole();
-    });
-  }
 
   
 
@@ -146,7 +68,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Register to continue your AI-powered learning",
+                    "Register to continue Your AI-powered Complaint Resolver",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.quicksand(
                       color: Colors.white,
@@ -157,16 +79,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  role == 'worker' || role == 'department head' ?
-                      CustomDropdown(
-                        items: departmentList,
-                        onChanged: (value) {
-                          setState(() {
-                            department = value;
-                          });
-                        },
-                      ) : SizedBox(),
-                  role == 'worker' || role == 'department head' ?SizedBox(height: 10,) : SizedBox(),
+
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -312,41 +225,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  role == 'department head' ?Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: codeController,
-                      keyboardType: TextInputType.number,
-                      style: GoogleFonts.lato(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Department Code",
-                        hintStyle: GoogleFonts.lato(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20
-                        ),
-                        prefixIcon: Icon(Icons.phone,color: Colors.black,),
-                        contentPadding: EdgeInsets.all(18),
-                      ),
-                    ),
-                  ) : SizedBox(),
-                  const SizedBox(height: 16),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -365,7 +243,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        if(role == 'citizen'){
                           authController.signup(
                             fullname: fullNameController.text,
                             email: emailController.text,
@@ -378,30 +255,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             emailController.clear();
                             fullNameController.clear();
                           });
-                        }
-                        else if(role=='worker'){
-                          authController.signUpWorker(
-                            fullname: fullNameController.text,
-                            email: emailController.text,
-                            password: passwordController.text,
-                            department: department!,
-                            context: context,
-                            ref: ref,
-                            phone: phoneController.text,
-                          );
-                        }
-                        else if(role=='department head'){
-                          authController.signUpDeptHead(
-                            fullname: fullNameController.text,
-                            email: emailController.text,
-                            password: passwordController.text,
-                            department: department!,
-                            context: context,
-                            ref: ref,
-                            phone: phoneController.text,
-                            code: codeController.text,
-                          );
-                        }
+
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,

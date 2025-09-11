@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:civic_pulse_frontend/global_variable..dart';
 import 'package:civic_pulse_frontend/models/complaint_report.dart';
+import 'package:civic_pulse_frontend/models/user.dart';
 import 'package:civic_pulse_frontend/models/worker.dart';
 import 'package:civic_pulse_frontend/service/manage_http_request.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class DepartmentHeadController {
 
   Future<List<ComplaintReport>> getAssignedReports(String deptHeadId) async {
     try{
+      print(deptHeadId);
       http.Response response = await http.get(
           Uri.parse('$uri/api/get-assigned-reports/$deptHeadId'),
         headers: <String,String>{
@@ -35,23 +37,23 @@ class DepartmentHeadController {
       }
 
     }catch(e){
-      throw Exception(e.toString());
       print(e.toString());
+      throw Exception(e.toString());
     }
   }
 
 
-  Future<List<Worker>> fetchWorkers({required String department}) async {
+  Future<List<User>> fetchWorkers({required String department,required String role}) async {
     try{
       http.Response response = await http.get(
-          Uri.parse('$uri/api/workers-of-department/$department'),
+          Uri.parse('$uri/api/get-depthead/$role/$department'),
           headers: <String,String>{
             'Content-Type':'application/json; charset=UTF-8'
           }
       );
       if(response.statusCode == 200){
         final List<dynamic> data = jsonDecode(response.body);
-        final List<Worker> workers = data.map((e) => Worker.fromMap(e)).toList();
+        final List<User> workers = data.map((e) => User.fromMap(e)).toList();
         return workers;
       }
       else{

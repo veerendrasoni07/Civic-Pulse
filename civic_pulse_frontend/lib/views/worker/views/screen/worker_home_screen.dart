@@ -1,12 +1,9 @@
+import 'package:civic_pulse_frontend/controllers/auth_controller.dart';
 import 'package:civic_pulse_frontend/controllers/complaint_controller.dart';
 import 'package:civic_pulse_frontend/controllers/dept_head_controller.dart';
 import 'package:civic_pulse_frontend/controllers/worker_controller.dart';
 import 'package:civic_pulse_frontend/models/complaint_report.dart';
-import 'package:civic_pulse_frontend/models/worker.dart';
-import 'package:civic_pulse_frontend/provider/deptheadprovider.dart';
-import 'package:civic_pulse_frontend/provider/workerprovider.dart';
-import 'package:civic_pulse_frontend/views/depthead/views/complaint_report_widget.dart';
-import 'package:civic_pulse_frontend/views/nav_screen/reports_screen.dart';
+import 'package:civic_pulse_frontend/provider/userprovider.dart';
 import 'package:civic_pulse_frontend/views/worker/views/widget/worker_complaint_report_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +22,7 @@ class _WorkerHomeScreenState extends ConsumerState<WorkerHomeScreen> {
   late Future<List<ComplaintReport>> futureAssignedReports;
 
   Future<void> fetchComplaintReports()async{
-    final worker = ref.read(workerProvider);
+    final worker = ref.read(userProvider);
     futureAssignedReports = WorkerController().getAssignedReports(worker!.id);
   }
 
@@ -39,7 +36,7 @@ class _WorkerHomeScreenState extends ConsumerState<WorkerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final depthead = ref.read(workerProvider);
+    final depthead = ref.read(userProvider);
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -138,7 +135,19 @@ class _WorkerHomeScreenState extends ConsumerState<WorkerHomeScreen> {
                           }
                         },
                       ),
-                      Center(child: Text("Completed Tasks")),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          AuthController().signOut(context: context, ref: ref);
+                        },
+                        icon: const Icon(Icons.edit),
+                        label: const Text("Edit Profile"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[700],
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                        ),
+                      ),
                     ]
                 ),
               )

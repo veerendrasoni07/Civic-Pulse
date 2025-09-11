@@ -1,8 +1,7 @@
 import 'package:civic_pulse_frontend/controllers/dept_head_controller.dart';
 import 'package:civic_pulse_frontend/models/complaint_report.dart';
-import 'package:civic_pulse_frontend/models/worker.dart';
 import 'package:civic_pulse_frontend/provider/commentProvider.dart';
-import 'package:civic_pulse_frontend/provider/deptheadprovider.dart';
+import 'package:civic_pulse_frontend/views/Widgets/more_details_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -112,7 +111,7 @@ class _WorkerComplaintReportWidgetState extends ConsumerState<WorkerComplaintRep
                     const SizedBox(width: 10,),
                     TextButton(
                         onPressed: (){
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => ReportDetails(report: report,)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ComplaintReportDetailsScreen(report: widget.report,)));
                         },
                         child: Row(
                           children: [

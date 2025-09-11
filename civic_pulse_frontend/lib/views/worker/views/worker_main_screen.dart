@@ -1,24 +1,28 @@
+import 'package:civic_pulse_frontend/provider/userprovider.dart';
 import 'package:civic_pulse_frontend/views/worker/views/screen/worker_home_screen.dart';
 import 'package:civic_pulse_frontend/views/worker/views/screen/worker_profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class WorkerMainScreen extends StatefulWidget {
+class WorkerMainScreen extends ConsumerStatefulWidget {
   const WorkerMainScreen({super.key});
 
   @override
-  State<WorkerMainScreen> createState() => _WorkerMainScreenState();
+  ConsumerState<WorkerMainScreen> createState() => _WorkerMainScreenState();
 }
 
-class _WorkerMainScreenState extends State<WorkerMainScreen> {
+class _WorkerMainScreenState extends ConsumerState<WorkerMainScreen> {
   int selectedPage = 0;
 
-  final List<Widget> pages = [
-    WorkerHomeScreen(),
-    WorkerProfileScreen(),
-  ];
+
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    final List<Widget> pages = [
+      WorkerHomeScreen(),
+      ProfileScreen(role: user!.role, name: user.fullname, email: user.email, phone: user.phone, id: user.id, imageUrl: user.picture)
+    ];
     return Scaffold(
       body: pages[selectedPage] ,
       bottomNavigationBar: BottomNavigationBar(

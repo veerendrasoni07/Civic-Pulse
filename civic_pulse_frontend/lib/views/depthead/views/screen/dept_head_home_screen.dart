@@ -3,7 +3,7 @@ import 'package:civic_pulse_frontend/controllers/dept_head_controller.dart';
 import 'package:civic_pulse_frontend/controllers/worker_controller.dart';
 import 'package:civic_pulse_frontend/models/complaint_report.dart';
 import 'package:civic_pulse_frontend/models/worker.dart';
-import 'package:civic_pulse_frontend/provider/deptheadprovider.dart';
+import 'package:civic_pulse_frontend/provider/userprovider.dart';
 import 'package:civic_pulse_frontend/views/depthead/views/complaint_report_widget.dart';
 import 'package:civic_pulse_frontend/views/nav_screen/reports_screen.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ class _DeptHeadHomeScreenState extends ConsumerState<DeptHeadHomeScreen> {
   late Future<List<ComplaintReport>> futureAssignedReports;
 
   Future<void> fetchAssignedReports() async {
-    final depthead = ref.read(deptHeadProvider);
+    final depthead = ref.read(userProvider);
     futureAssignedReports = DepartmentHeadController().getAssignedReports(depthead!.id);
   }
 
@@ -37,7 +37,7 @@ class _DeptHeadHomeScreenState extends ConsumerState<DeptHeadHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final depthead = ref.read(deptHeadProvider);
+    final depthead = ref.read(userProvider);
     return DefaultTabController(
         length: 4,
         child: Scaffold(
@@ -143,7 +143,8 @@ class _DeptHeadHomeScreenState extends ConsumerState<DeptHeadHomeScreen> {
                         },
                       ),
 
-                      Center(child: Text("Escalated"),),
+
+                      Center(child: Text("Bad Feedback"),),
                       Center(child: Text("Bad Feedback"),),
                     ]
                 ),

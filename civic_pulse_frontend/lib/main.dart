@@ -1,6 +1,4 @@
 import 'package:civic_pulse_frontend/provider/userprovider.dart';
-import 'package:civic_pulse_frontend/provider/workerprovider.dart';
-import 'package:civic_pulse_frontend/provider/deptheadprovider.dart';
 import 'package:civic_pulse_frontend/views/authentication/login_screen.dart';
 import 'package:civic_pulse_frontend/views/main_screen.dart';
 import 'package:civic_pulse_frontend/views/worker/views/worker_main_screen.dart';
@@ -8,37 +6,24 @@ import 'package:civic_pulse_frontend/views/depthead/views/dept_head_main_screen.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 void main() {
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
-  Future<void> checkTokenAndRole(WidgetRef ref) async {
+  Future<void> checkTokenAndUser(WidgetRef ref) async {
     final prefs = await SharedPreferences.getInstance();
-
     final token = prefs.getString('auth-token');
+    final userJson = prefs.getString('user');
 
-    // Check each role separately
-    final user = prefs.getString('user');
-    final worker = prefs.getString('worker');
-    final deptHead = prefs.getString('dept-head');
-
-    if (token != null) {
-      if (user != null) {
-        ref.read(userProvider.notifier).setUser(user);
-      } else if (worker != null) {
-        ref.read(workerProvider.notifier).setWorker(worker);
-      } else if (deptHead != null) {
-        ref.read(deptHeadProvider.notifier).setDeptHead(deptHead);
-      }
+    if (token != null && userJson != null) {
+      ref.read(userProvider.notifier).setUser(userJson);
     } else {
-      // Clear all
       ref.read(userProvider.notifier).signOut();
-      ref.read(workerProvider.notifier).signOut();
-      ref.read(deptHeadProvider.notifier).signOut();
     }
   }
 
@@ -47,22 +32,25 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: FutureBuilder(
-        future: checkTokenAndRole(ref),
+        future: checkTokenAndUser(ref),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
           final user = ref.watch(userProvider);
-          final worker = ref.watch(workerProvider);
-          final deptHead = ref.watch(deptHeadProvider);
 
           if (user != null) {
-            return const MainScreen();
-          } else if (worker != null) {
-            return const WorkerMainScreen();
-          } else if (deptHead != null) {
-            return const DeptHeadMainScreen();
+            switch (user.role) {
+              case "citizen":
+                return const MainScreen();
+              case "worker":
+                return const WorkerMainScreen();
+              case "depthead":
+                return const DeptHeadMainScreen();
+              default:
+                return const LoginScreen();
+            }
           } else {
             return const LoginScreen();
           }

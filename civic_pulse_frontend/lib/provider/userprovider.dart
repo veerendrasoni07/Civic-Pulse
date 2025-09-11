@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserProvider extends StateNotifier<User?>{
   UserProvider():super(
-    User(id: '',fullname: '', email: '', phone: '', googleId: '', picture: '',state: '',city:'',address:'',password: '', authProvider: [], role: '')
+    User(id: '',fullname: '', email: '', phone: '', googleId: '', picture: '',state: '',city:'',address:'',password: '',department: '', authProvider: [], role: '')
   );
 
 

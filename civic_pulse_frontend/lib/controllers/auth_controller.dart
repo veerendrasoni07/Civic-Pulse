@@ -1,14 +1,9 @@
 
 import 'dart:convert';
-
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:civic_pulse_frontend/global_variable..dart';
-import 'package:civic_pulse_frontend/models/dept_head.dart';
 import 'package:civic_pulse_frontend/models/user.dart';
-import 'package:civic_pulse_frontend/models/worker.dart';
-import 'package:civic_pulse_frontend/provider/deptheadprovider.dart';
 import 'package:civic_pulse_frontend/provider/userprovider.dart';
-import 'package:civic_pulse_frontend/provider/workerprovider.dart';
 import 'package:civic_pulse_frontend/service/manage_http_request.dart';
 import 'package:civic_pulse_frontend/views/authentication/login_screen.dart';
 import 'package:civic_pulse_frontend/views/depthead/views/dept_head_main_screen.dart';
@@ -37,15 +32,15 @@ class AuthController{
           id: '',
           fullname: fullname,
           email: email,
-        password: password,
-        phone: phone,
-        state: '',
-        city: '',
-        address: '',
-        googleId: '',
-        picture: '',
-        authProvider: [],
-        role: ''
+          password: password,
+          phone: phone,
+          state: '',
+          city: '',
+          address: '',
+          googleId: '',
+          picture: '',
+          authProvider: [],
+          role: ''
       );
       http.Response response = await http.post(
           Uri.parse('$uri/api/signup'),
@@ -72,47 +67,61 @@ class AuthController{
     required String email,
     required String password,
     required BuildContext context,
-    required WidgetRef ref
-  })async{
-    try{
-
+    required WidgetRef ref,
+  }) async {
+    try {
       http.Response response = await http.post(
-          Uri.parse('$uri/api/login'),
-          body: jsonEncode({
-            'email':email,
-            'password':password,
-          }),
-          headers: <String,String>{
-            'Content-Type':'application/json; charset=UTF-8'
-          }
+        Uri.parse('$uri/api/login'),
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
       );
 
       manageHttpRequest(
-          response: response,
-          context: context,
-          onSuccess: ()async{
+        response: response,
+        context: context,
+        onSuccess: () async {
+          SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
 
-            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          String token = jsonDecode(response.body)['token'];
+          await sharedPreferences.setString('auth-token', token);
 
-            String token = await jsonDecode(response.body)['token'];
+          final userMap = jsonDecode(response.body)['user'];
+          final userJson = jsonEncode(userMap);
 
-            await sharedPreferences.setString('auth-token',token );
+          ref.read(userProvider.notifier).setUser(userJson);
+          await sharedPreferences.setString('user', userJson);
 
-            final userJson = jsonEncode(jsonDecode(response.body)['user']);
+          // 🔑 Navigate based on role
+          String role = userMap['role'];
+          Widget homeScreen;
 
-            ref.read(userProvider.notifier).setUser(userJson);
-
-            await sharedPreferences.setString('user', userJson);
-
-
-
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>MainScreen()), (route)=>false);
+          if (role == "worker") {
+            homeScreen = const WorkerMainScreen();
+          } else if (role == "depthead") {
+            homeScreen = const DeptHeadMainScreen();
+          } else {
+            homeScreen = const MainScreen(); // citizen default
           }
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => homeScreen),
+                (route) => false,
+          );
+        },
       );
-    }catch(e){
+    } catch (e) {
+      print(e.toString());
       showSnackBar(context, "Login Failed", e.toString(), ContentType.failure);
     }
   }
+
 
 
   // google login
@@ -282,183 +291,4 @@ class AuthController{
   }
 
 
-  // TODO:
-  Future<void> signUpWorker({
-    required String fullname,
-    required String email,
-    required String password,
-    required String department,
-    required String phone,
-    required BuildContext context,
-    required WidgetRef ref,
-  })async{
-    try {
-      Worker worker = Worker(
-          id: '',
-          fullname: fullname,
-          email: email,
-          password: password,
-          department: department,
-          assignedReports: [],
-          phone: phone,
-          address: '',
-          picture: '',
-      );
-      http.Response response = await http.post(
-          Uri.parse('$uri/api/worker/register'),
-          body: worker.toJson(),
-          headers: <String,String>{
-            'Content-Type':'application/json; charset=UTF-8'
-          }
-      );
-
-      manageHttpRequest(response: response, context: context, onSuccess: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
-        showSnackBar(context, "SignUp Successfully", "Account is created now you can login with same credential!", ContentType.success);
-      });
-    }catch (e) {
-      showSnackBar(context, "Failed To SignUp", e.toString(), ContentType.failure);
-      print(e.toString());
-    }
-
   }
-
-
-  Future<void> loginWorker({
-    required String email,
-    required String password,
-    required BuildContext context,
-    required WidgetRef ref
-  })async{
-    try{
-
-      http.Response response = await http.post(
-          Uri.parse('$uri/api/worker/login'),
-          body: jsonEncode({
-            'email':email,
-            'password':password,
-          }),
-          headers: <String,String>{
-            'Content-Type':'application/json; charset=UTF-8'
-          }
-      );
-
-      manageHttpRequest(
-          response: response,
-          context: context,
-          onSuccess: ()async{
-
-            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
-            String token = await jsonDecode(response.body)['token'];
-
-            await sharedPreferences.setString('auth-token',token );
-
-            final workerJson = jsonEncode(jsonDecode(response.body)['worker']);
-
-            ref.read(workerProvider.notifier).setWorker(workerJson);
-
-            await sharedPreferences.setString('worker', workerJson);
-
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>WorkerMainScreen()), (route)=>false);
-
-          }
-      );
-    }catch(e){
-      showSnackBar(context, "Login Failed", e.toString(), ContentType.failure);
-    }
-  }
-Future<void> signUpDeptHead({
-    required String fullname,
-    required String email,
-    required String password,
-    required String phone,
-    required String department,
-    required String code,
-    required BuildContext context,
-    required WidgetRef ref,
-  })async{
-    try {
-      DeptHead deptHead = DeptHead(
-          id: '',
-          fullname: fullname,
-          email: email,
-          password: password,
-          phone: phone,
-          address: '',
-          googleId: '',
-          picture: '',
-          department: department,
-          authProvider: [],
-          role: '',
-          codeUsed: code
-      );
-      http.Response response = await http.post(
-          Uri.parse('$uri/api/register-head'),
-          body: deptHead.toJson(),
-          headers: <String,String>{
-            'Content-Type':'application/json; charset=UTF-8'
-          }
-      );
-
-      manageHttpRequest(response: response, context: context, onSuccess: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
-        showSnackBar(context, "SignUp Successfully", "Account is created now you can login with same credential!", ContentType.success);
-      });
-    }catch (e) {
-      showSnackBar(context, "Failed To SignUp", e.toString(), ContentType.failure);
-      print(e.toString());
-    }
-
-  }
-
-
-  Future<void> loginDeptHead({
-    required String email,
-    required String password,
-    required BuildContext context,
-    required WidgetRef ref
-  })async{
-    try{
-
-      http.Response response = await http.post(
-          Uri.parse('$uri/api/dept-head/login'),
-          body: jsonEncode({
-            'email':email,
-            'password':password,
-          }),
-          headers: <String,String>{
-            'Content-Type':'application/json; charset=UTF-8'
-          }
-      );
-
-      manageHttpRequest(
-          response: response,
-          context: context,
-          onSuccess: ()async{
-
-            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
-            String token = await jsonDecode(response.body)['token'];
-
-            await sharedPreferences.setString('auth-token',token );
-
-            final deptHeadJson = jsonEncode(jsonDecode(response.body)['depthead']);
-
-            ref.read(deptHeadProvider.notifier).setDeptHead(deptHeadJson);
-
-            await sharedPreferences.setString('dept-head', deptHeadJson);
-
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>DeptHeadMainScreen()), (route)=>false);
-
-          }
-      );
-    }catch(e){
-      showSnackBar(context, "Login Failed", e.toString(), ContentType.failure);
-    }
-  }
-
-
-
-
-}

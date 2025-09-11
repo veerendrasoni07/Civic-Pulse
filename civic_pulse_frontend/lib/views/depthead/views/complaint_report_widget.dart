@@ -4,7 +4,7 @@ import 'package:civic_pulse_frontend/models/complaint_report.dart';
 import 'package:civic_pulse_frontend/models/user.dart';
 import 'package:civic_pulse_frontend/models/worker.dart';
 import 'package:civic_pulse_frontend/provider/commentProvider.dart';
-import 'package:civic_pulse_frontend/provider/deptheadprovider.dart';
+import 'package:civic_pulse_frontend/provider/userprovider.dart';
 import 'package:civic_pulse_frontend/views/Widgets/comment_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,10 +22,10 @@ class _ComplaintReportWidgetState extends ConsumerState<ComplaintReportWidget> {
   List<Worker> workers = [] ;
   final Set<String> workerIds= {};
 
-  late Future<List<Worker>> futureWorkers;
+  late Future<List<User>> futureWorkers;
   Future<void> futureWorkersFunction()async{
-    final depthead = ref.read(deptHeadProvider);
-    futureWorkers = DepartmentHeadController().fetchWorkers(department: depthead!.department);
+    final depthead = ref.read(userProvider);
+    futureWorkers = DepartmentHeadController().fetchWorkers(department: depthead!.department!, role: 'worker');
   }
   @override
   void initState() {
@@ -143,7 +143,7 @@ class _ComplaintReportWidgetState extends ConsumerState<ComplaintReportWidget> {
                             return  Column(
                               children: [
                                 Expanded(
-                                  child: FutureBuilder<List<Worker>>(
+                                  child: FutureBuilder<List<User>>(
                                     future: futureWorkers ,
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -181,7 +181,7 @@ class _ComplaintReportWidgetState extends ConsumerState<ComplaintReportWidget> {
                                                       Text(worker.fullname)
                                                     ],
                                                   ),
-                                                  subtitle: Text(worker.department),
+                                                  subtitle: Text(worker.department!),
                                                 );
                                               },
                                             );

@@ -18,7 +18,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final AuthController authController = AuthController();
 
   bool isPasswordVisible = false;
-  String? role;
 
 
 
@@ -27,6 +26,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       body: Container(
         width: double.infinity,
+        height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -144,32 +144,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: role,
-                  hint: const Text("Select Role"),
-                  decoration: InputDecoration(
-                    focusColor: Colors.white,
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: const BorderSide(color: Colors.white)
-                    )
-                  ),
-                  style: const TextStyle(color: Colors.black),
-                  dropdownColor: Colors.white,
-                  items: const [
-                    DropdownMenuItem(value: "citizen", child: Text("Citizen")),
-                    DropdownMenuItem(value: "worker", child: Text("Worker")),
-                    DropdownMenuItem(value: "department head", child: Text("Department Head")),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      role = value;
-                    });
-                  },
-                ),
+
                 const SizedBox(height: 16),
                 Align(
                   alignment: Alignment.centerRight,
@@ -189,31 +164,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      if(role == 'citizen'){
                         authController.login(
                           email: emailController.text,
                           password: passwordController.text,
                           context: context,
                           ref: ref,
                         );
-                      }
-                      else if(role=='worker'){
-                        authController.loginWorker(
-                          email: emailController.text,
-                          password: passwordController.text,
-                          context: context,
-                          ref: ref,
-                        );
-                      }
-                      else if(role=='department head'){
-                        authController.loginDeptHead(
-                          email: emailController.text,
-                          password: passwordController.text,
-                          context: context,
-                          ref: ref,
-                        );
-                      }
-                    },
+                      },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Color(0xFFB266FF),
@@ -248,46 +205,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
 
                 const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    label: Text(
-                      "Login via Google",
-                      style: GoogleFonts.montserrat(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 24),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: const BorderSide(color: Colors.white),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: () async{
-                      await AuthController().googleLogin(context: context);
-                    },
-                  ),
-                ),
-                SizedBox(height: 10,),
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: OutlinedButton.icon(
+                //     label: Text(
+                //       "Login via Google",
+                //       style: GoogleFonts.montserrat(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 24),
+                //     ),
+                //     style: OutlinedButton.styleFrom(
+                //       padding: const EdgeInsets.symmetric(vertical: 14),
+                //       side: const BorderSide(color: Colors.white),
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(20),
+                //       ),
+                //     ),
+                //     onPressed: () async{
+                //       await AuthController().googleLogin(context: context);
+                //     },
+                //   ),
+                // ),
+                //SizedBox(height: 10,),
                 // Google Login
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    label: Text(
-                      "Login via OTP",
-                      style: GoogleFonts.montserrat(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 24),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: const BorderSide(color: Colors.white),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: ()async{
-                      //Navigator.push(context, MaterialPageRoute(builder: (_)=>OtpScreen()));
-                    },
-                  ),
-                ),
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: OutlinedButton.icon(
+                //     label: Text(
+                //       "Login via OTP",
+                //       style: GoogleFonts.montserrat(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 24),
+                //     ),
+                //     style: OutlinedButton.styleFrom(
+                //       padding: const EdgeInsets.symmetric(vertical: 14),
+                //       side: const BorderSide(color: Colors.white),
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(20),
+                //       ),
+                //     ),
+                //     onPressed: ()async{
+                //       //Navigator.push(context, MaterialPageRoute(builder: (_)=>OtpScreen()));
+                //     },
+                //   ),
+                // ),
 
                 const SizedBox(height: 15),
 
@@ -313,8 +270,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     )
                   ],
-                ),
-                SizedBox(height: 200,)
+                )
               ],
             ),
           ),

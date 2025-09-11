@@ -1,1 +1,1 @@
-String uri = 'http://192.168.29.41:3000';
+String uri = 'https://deploy-backend-pulse-production.up.railway.app';

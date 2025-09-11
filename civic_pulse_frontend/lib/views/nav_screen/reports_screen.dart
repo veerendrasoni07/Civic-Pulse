@@ -2,6 +2,7 @@ import 'package:civic_pulse_frontend/models/complaint_report.dart';
 import 'package:civic_pulse_frontend/models/user.dart';
 import 'package:civic_pulse_frontend/provider/commentProvider.dart';
 import 'package:civic_pulse_frontend/views/Widgets/comment_section.dart';
+import 'package:civic_pulse_frontend/views/Widgets/more_details_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -95,7 +96,7 @@ class MyReport extends ConsumerWidget {
                     const SizedBox(width: 10,),
                     TextButton(
                         onPressed: (){
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => ReportDetails(report: report,)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ComplaintReportDetailsScreen(report: report,)));
                         },
                         child: Row(
                           children: [
