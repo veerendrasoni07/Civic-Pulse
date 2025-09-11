@@ -3,7 +3,7 @@ const deptRouter = express.Router();
 const DeptCode = require('../models/department_code');
 const DeptHead = require('../models/dept_head');
 const ComplainReport = require('../models/complaint_report');
-const Worker = require('../models/worker');
+const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -67,7 +67,7 @@ deptRouter.post('/api/dept-head/login',async(req,res)=>{
 deptRouter.get('/api/get-assigned-reports/:deptHeadId',async(req,res)=>{
   try {
     const {deptHeadId} = req.params;
-    const deptHead = await DeptHead.findById(deptHeadId);
+    const deptHead = await User.findById(deptHeadId);
     if(!deptHead) return res.status(400).json({msg:"Department Head Not Found"});
     const reports = await ComplainReport.find({"assignedHead.headId":deptHeadId});
     res.status(200).json(reports);
@@ -77,12 +77,12 @@ deptRouter.get('/api/get-assigned-reports/:deptHeadId',async(req,res)=>{
   }
 });
 
-// worker according to the department
 
+// worker according to the department
 deptRouter.get('/api/workers-of-department/:department',async(req,res)=>{
   try {
     const {department} = req.params;
-    const workers = await Worker.find({
+    const workers = await User.find({
       department:department
     });
     res.status(200).json(workers);
@@ -100,7 +100,7 @@ deptRouter.post('/api/assign-reports/worker',async(req,res)=>{
     if(!report) return res.status(400).json({msg:"Report not found"});
     
     // validate workers
-    const workerDoc = await Worker.find({
+    const workerDoc = await User.find({
       _id:{$in:workers.map(w => w.workerId)}
     })
 

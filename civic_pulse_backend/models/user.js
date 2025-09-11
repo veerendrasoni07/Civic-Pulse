@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
   googleId: String,
   picture: String,
   authProvider: [String],
+  department:String,
   role: { type: String, default: "citizen" }, // citizen, operator, supervisor,
   createdAt: { type: Date, default: Date.now },
 });

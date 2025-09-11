@@ -4,6 +4,7 @@ const DeptHead = require('../models/dept_head');
 const ComplainReport = require('../models/complaint_report');
 const adminRouter = express.Router();
 const crypto = require("crypto");
+const User = require('../models/user');
 
 // generate department code for dept head signup
 adminRouter.post("/api/generate-code", async (req, res) => {
@@ -52,10 +53,10 @@ adminRouter.post("/api/assign-reports/dept-head", async (req, res) => {
 });
 
 
-adminRouter.get('/api/get-depthead/:department',async(req,res)=>{
+adminRouter.get('/api/get-depthead/:role/:department',async(req,res)=>{
   try {
-    const {department} = req.params;
-    const deptHead = await DeptHead.find({department:department});
+    const {department,role} = req.params;
+    const deptHead = await User.find({department:department,role:role});
     res.status(200).json(deptHead);
   } catch (error) {
     console.log(error);

@@ -2,6 +2,7 @@ const express = require('express');
 const Worker = require('../models/worker');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 const ComplainReport = require('../models/complaint_report');
 const workerAuthRoute = express.Router();
 require('dotenv').config();
@@ -52,12 +53,12 @@ workerAuthRoute.post('/api/worker/login',async(req,res)=>{
 workerAuthRoute.get('/api/fetch-all-assigned-reports/:workerId',async(req,res)=>{
     try {
         const {workerId} = req.params;
-        const worker = await Worker.findById(workerId);
+        const worker = await User.findById(workerId);
         if(!worker){
             return res.status(400).json({msg:"Worker is not found"});
         }
 
-        const allAssignedReports = await ComplainReport.find({"assignedTo.workerId":workerId})
+        const allAssignedReports = await ComplainReport.find({"assignedTo.workerId":workerId});
         res.status(200).json(allAssignedReports);
     } catch (error) {
         console.log(error);
